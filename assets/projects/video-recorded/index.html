@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Record</title>
+    <style>
+      h1 {
+        text-align: center;
+      }
+      body {
+        text-align: center;
+      }
+      .container-webcam {
+        background-color: #999;
+        display: flex;
+        flex-direction: column;
+        width: 40vw;
+        margin: 0 auto;
+        button {
+          width: 25%;
+          margin: 5px auto;
+        }
+        a {
+          text-decoration: underline;
+          color: #00f
+        }
+      }
+      .container-webcam__video {
+        height: 70vh;
+        width: 100%;
+        video {
+          height: 100%;
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Recorded webCam</h1>
+    <div class="container-webcam">
+      <div class="container-webcam__video">
+        <video muted id="video" autoplay></video>
+      </div>
+      <button id="btn">Start recording</button>
+      <button id="stopbtn">Stop recording</button>
+      <a id="downloadLink" download="video.mp4">Download Video</a>
+    </div>
+     <!-- <script src="./record.js"></script> -->
+    <script type="text/javascript">
+      const $video = document.getElementById("video"),
+        $startBtn = document.getElementById("btn"),
+        $stopBtn = document.getElementById("stopbtn"),
+        $downloadLink = document.getElementById("downloadLink");
+      window.onload = async function () {
+        $stopBtn.style.display = "none";
+
+        videoStream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true,
+        });
+        video.srcObject = videoStream;
+      };
+      $startBtn.onclick = function () {
+        $startBtn.style.display = "none";
+        $stopBtn.style.display = "inline";
+
+        mediaRecorder = new MediaRecorder(videoStream);
+        let blob = [];
+        mediaRecorder.addEventListener("dataavailable", (e) => {
+          blob.push(e.data);
+        });
+        mediaRecorder.addEventListener("stop", () => {
+          let videoLocal = URL.createObjectURL(new Blob(blob));
+          $downloadLink.href = videoLocal;
+        });
+        mediaRecorder.start();
+      };
+      $stopBtn.onclick = function () {
+        mediaRecorder.stop();
+      };
+    </script>
+  </body>
+</html>
